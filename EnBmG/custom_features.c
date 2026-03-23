@@ -68,6 +68,14 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record,
                     return true;
             }
             break;
+        // Thumb layer-taps sit on '*' which auto-holds on any keypress.
+        // Override for plain modifiers so Shift+Enter, Ctrl+Space, etc. tap.
+        case SYM_ENT:
+        case NAV_SPC:
+            if (IS_MODIFIER_KEYCODE(other_keycode)) {
+                return false;
+            }
+            break;
     }
     return get_chordal_hold_default(tap_hold_record, other_record);
 }
