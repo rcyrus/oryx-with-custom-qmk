@@ -231,6 +231,6 @@ bool caps_word_press_user(uint16_t keycode) {
 
 // Caps Word LED indicator using Moonlander status LEDs
 void caps_word_set_user(bool active) {
-    ML_LED_1(active);
-    ML_LED_4(active);
+    STATUS_LED_1(active);
+    STATUS_LED_4(active);
 }
