@@ -37,8 +37,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     CW_TOGG,                                          QK_LEAD,  KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_BSLS,
     KC_MEH,   HRM_A,    HRM_S,    HRM_D,    HRM_F,    KC_G,     TG(_GAMING),                                                          QK_REP,   KC_H,     HRM_J,    HRM_K,    HRM_L,    HRM_SC,   KC_QUOT,
     KC_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,                                         KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,
-    KC_LCTL,  KC_LALT,  KC_GRV,   KC_LBRC,  KC_RBRC,  KC_LGUI,                                                                                          MO(_SYSTEM), KC_UP,  KC_DOWN,  KC_LEFT,  KC_RGHT,  KC_RALT,
-    NAV_SPC,  KC_BSPC,  KC_LCTL,                      KC_HYPR,  KC_TAB,   SYM_ENT
+    KC_LCTL,  KC_LALT,  KC_GRV,   KC_LEFT,  KC_RGHT,  KC_LCTL,                                                                                          MO(_SYSTEM), KC_UP,  KC_DOWN,  KC_LBRC,  KC_RBRC,  KC_RALT,
+    NAV_SPC,  KC_BSPC,  KC_LGUI,                      KC_HYPR,  KC_TAB,   SYM_ENT
   ),
 
   // ─── Layer 1: Nav (hold Space) ────────────────────────────────

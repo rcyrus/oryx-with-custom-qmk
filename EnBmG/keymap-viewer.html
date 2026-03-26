@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dream Layout — Moonlander Keymap</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ks: 56px; --gap: 3px; --kr: 7px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --bg: #0f0f1a; --surface: #1a1a2e; --surface2: #222240;
+  --text: #e8e8f0; --dim: #777;
+}
+body {
+  font-family: var(--font); background: var(--bg); color: var(--text);
+  display: flex; flex-direction: column; align-items: center;
+  min-height: 100vh; padding: 20px 10px; -webkit-font-smoothing: antialiased;
+}
+.header { text-align: center; margin-bottom: 14px; }
+.header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+.header .sub { color: var(--dim); font-size: 12px; margin-top: 4px; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; justify-content: center; }
+.tab {
+  padding: 7px 14px; border: 2px solid transparent; border-radius: 8px;
+  background: var(--surface); color: var(--dim); cursor: pointer;
+  font-size: 12px; font-weight: 600; transition: all 0.15s; user-select: none;
+}
+.tab:hover { color: var(--text); background: var(--surface2); }
+.tab.active { border-color: var(--accent); color: #fff; }
+.tab .num { opacity: 0.4; font-size: 10px; margin-left: 3px; }
+
+.layer-info {
+  text-align: center; margin-bottom: 14px; padding: 6px 20px;
+  background: var(--surface); border-radius: 8px; font-size: 12px;
+  border-left: 3px solid var(--accent);
+}
+.layer-info .name { font-weight: 700; }
+.layer-info .act { color: var(--dim); margin-left: 8px; }
+
+.keyboard { display: flex; gap: 36px; align-items: flex-start; margin-bottom: 14px; }
+.half { display: flex; flex-direction: column; gap: var(--gap); }
+.row { display: flex; gap: var(--gap); position: relative; }
+
+.key {
+  width: var(--ks); height: var(--ks); border-radius: var(--kr);
+  border: 1.5px solid #c8c8d0; background: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; color: #2a2a2a;
+  position: relative; flex-shrink: 0; cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.key:hover { transform: translateY(-2px); box-shadow: 0 3px 8px rgba(0,0,0,0.12); z-index: 2; }
+.key .lbl { line-height: 1.15; text-align: center; white-space: nowrap; }
+.key .sub { font-size: 9px; color: #888; font-weight: 500; margin-top: 1px; }
+
+.key.m { background: #e5f5e0; border-color: #8bc38b; }
+.key.h { background: #dfeeff; border-color: #7db4f0; }
+.key.h .sub { color: #5588bb; font-weight: 600; }
+.key.l { background: #f0e4fa; border-color: #c090e0; }
+.key.l .sub { color: #8855aa; font-weight: 600; }
+.key.s { background: #fff6d6; border-color: #e0c060; }
+.key.t { background: #f0f0f2; border-color: #ddd; box-shadow: none; }
+.key.t .lbl { color: #b0b0b0; font-size: 11px; font-weight: 500; }
+.key.x {
+  border: 2.5px solid var(--accent); background: #fff;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.key.x .lbl { font-weight: 700; font-size: 10px; color: var(--accent); }
+.key.d { background: #ffe0e0; border-color: #e06060; }
+.key.d .lbl { color: #c02020; font-weight: 800; }
+
+.key.selected {
+  box-shadow: 0 0 0 3px #5c6bc0, 0 0 16px rgba(92,107,192,0.5) !important;
+  z-index: 10 !important; transform: translateY(-3px) !important;
+}
+
+.thumb-area { display: flex; flex-direction: column; gap: var(--gap); margin-top: 6px; }
+.big-row { display: flex; gap: var(--gap); }
+.big-row.align-right { justify-content: flex-end; }
+.big-row.align-left { justify-content: flex-start; }
+.thumb-row { display: flex; gap: var(--gap); }
+.thumb-row.align-right { justify-content: flex-end; }
+.thumb-row.align-left { justify-content: flex-start; }
+.thumb-row .key, .big-row .key { box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+.stagger .row { padding-top: 18px; padding-bottom: 3px; }
+
+.combos { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; font-size: 11px; }
+.combo { background: var(--surface); padding: 4px 10px; border-radius: 5px; color: var(--dim); }
+.combo b { color: var(--text); font-weight: 600; }
+
+.legend { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; font-size: 11px; color: var(--dim); }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid #999; flex-shrink: 0; }
+
+.glossary {
+  width: min(1120px, 100%);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.glossary-card {
+  background: var(--surface);
+  border: 1px solid #303052;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--dim);
+}
+.glossary-card b { color: var(--text); font-weight: 700; }
+.glossary-card code {
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 10px;
+  color: #b7c0ff;
+}
+
+.controls { display: flex; gap: 8px; margin-bottom: 16px; }
+.btn {
+  padding: 7px 16px; border: 1px solid #444; border-radius: 6px;
+  background: var(--surface); color: var(--text); cursor: pointer;
+  font-size: 12px; font-family: var(--font); transition: background 0.15s;
+}
+.btn:hover { background: var(--surface2); }
+
+/* ─── Detail Panel ─────────────────────────────────────── */
+.detail-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55); z-index: 100;
+  justify-content: center; align-items: center;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.detail-overlay.open { display: flex; }
+.detail-panel {
+  background: #1e1e36; border: 1px solid #3a3a5c; border-radius: 14px;
+  padding: 24px 28px; max-width: 460px; width: 92%;
+  max-height: 82vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  color: var(--text); position: relative;
+}
+.detail-close {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none; color: var(--dim); font-size: 22px;
+  cursor: pointer; line-height: 1; padding: 4px;
+}
+.detail-close:hover { color: var(--text); }
+.detail-header {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 18px;
+}
+.detail-header .key { flex-shrink: 0; cursor: default; }
+.detail-header .key:hover { transform: none; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.detail-meta { flex: 1; }
+.detail-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 11px; font-weight: 600; color: #333; margin-right: 6px;
+}
+.trans-badge { background: #e0e0e0 !important; color: #666 !important; }
+.detail-pos { font-size: 11px; color: var(--dim); margin-top: 4px; }
+.detail-section { margin-bottom: 16px; }
+.detail-section:last-child { margin-bottom: 0; }
+.detail-section h4 {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--dim); margin-bottom: 8px; font-weight: 600;
+}
+.detail-behavior { width: 100%; border-collapse: collapse; }
+.detail-behavior td {
+  padding: 5px 0; font-size: 13px; vertical-align: top; border-bottom: 1px solid #2a2a4a;
+}
+.detail-behavior td:first-child { color: var(--dim); width: 110px; font-size: 12px; }
+.detail-note { font-size: 11px; color: var(--dim); margin-top: 8px; line-height: 1.5; }
+.detail-warn { color: #e06060; }
+.detail-qmk {
+  display: inline-block; background: #12122a; border: 1px solid #2a2a4a;
+  border-radius: 4px; padding: 4px 10px; font-family: 'SF Mono', Menlo, monospace;
+  font-size: 12px; color: #a0a0ff; user-select: all;
+}
+.detail-combo {
+  background: #12122a; border-radius: 4px; padding: 5px 10px;
+  font-size: 12px; margin-bottom: 4px;
+}
+.detail-combo strong { color: #fff; }
+.detail-layers { width: 100%; border-collapse: collapse; }
+.detail-layers td {
+  padding: 4px 6px; font-size: 12px; border-bottom: 1px solid #1a1a30;
+}
+.detail-layers .layer-dot { font-size: 16px; width: 20px; text-align: center; }
+.detail-layers .layer-name { font-weight: 600; width: 70px; }
+.detail-layers .dim { color: #666; font-style: italic; }
+.detail-layers tr.current-layer { background: rgba(92,107,192,0.12); }
+.detail-layers tr.current-layer td { border-color: #2a2a50; }
+
+.print-all { display: none; }
+
+@media print {
+  body { background: #fff; color: #000; padding: 8px; }
+  .header h1 { color: #000; font-size: 18px; }
+  .header .sub, .tabs, .controls, .detail-overlay { display: none !important; }
+  .layer-info { background: #f5f5f5; color: #000; border-color: #333; }
+  .layer-info .act { color: #555; }
+  .key { box-shadow: none !important; border-color: #999; cursor: default; }
+  .key:hover { transform: none !important; }
+  .key.t { background: #f5f5f5; border-color: #ccc; }
+  .key.t .lbl { color: #aaa; }
+  .key.x { border-color: #333; } .key.x .lbl { color: #333; }
+  .combos .combo { background: #f0f0f0; border: 1px solid #ccc; color: #333; }
+  .combos .combo b { color: #000; }
+  .legend { color: #555; } .swatch { border-color: #666; }
+  .keyboard { gap: 24px; }
+  .single-view { display: none !important; }
+  .print-all { display: block !important; }
+  .print-layer { page-break-inside: avoid; margin-bottom: 20px; }
+  .print-layer h3 { text-align: center; margin-bottom: 6px; font-size: 14px; padding: 4px 0; border-bottom: 1px solid #ccc; }
+  .print-layer .keyboard { margin-bottom: 8px; }
+}
+@page { size: landscape; margin: 0.4in; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Dream Layout &mdash; Moonlander</h1>
+  <div class="sub">Oryx layout EnBmG &middot; Custom QMK firmware &middot; Viewer uses macOS-friendly Cmd labels even though QMK calls that modifier GUI &middot; Keys 0-6 switch layers</div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div id="layerInfo" class="layer-info"></div>
+
+<div class="single-view" id="singleView">
+  <div class="keyboard" id="keyboard"></div>
+</div>
+
+<div class="combos" id="combos"></div>
+<div class="legend" id="legend"></div>
+<div class="glossary" id="glossary"></div>
+
+<div class="controls">
+  <button class="btn" onclick="window.print()">Print All Layers</button>
+  <button class="btn" id="staggerBtn" onclick="toggleStagger()">Column Stagger: Off</button>
+</div>
+
+<div class="print-all" id="printAll"></div>
+
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-panel" id="detailPanel"></div>
+</div>
+
+<script>
+const T = 0;
+const STAGGER = [18, 9, 0, -3, 0, 9, 18];
+let staggerOn = false, currentLayer = 0, selectedKeyEl = null;
+
+// ─── Layer Data ──────────────────────────────────────────────────
+
+const LAYERS = [
+  {
+    name: 'Base', desc: 'QWERTY + Home Row Mods', act: 'Always active', color: '#5c6bc0',
+    L: [
+      [['=','k'],['1','k'],['2','k'],['3','k'],['4','k'],['5','k'],['Esc','k']],
+      [['Tab','k'],['Q','k'],['W','k'],['E','k'],['R','k'],['T','k'],['CW','s']],
+      [['Meh','m'],['A','h','Cmd'],['S','h','Alt'],['D','h','Shift'],['F','h','Ctrl'],['G','k'],['Game','s','TG(6)']],
+      [['LSft','m'],['Z','k'],['X','k'],['C','k'],['V','k'],['B','k']],
+      [['LCtrl','m'],['LAlt','m'],['`','k'],['\u2190','k'],['\u2192','k']]
+    ],
+    LB: ['LCtrl','m'], LT: [['Space','l','Nav'],['Bspc','k'],['LCmd','m']],
+    R: [
+      [['Del','k'],['6','k'],['7','k'],['8','k'],['9','k'],['0','k'],['\u2013','k']],
+      [['Leader','s'],['Y','k'],['U','k'],['I','k'],['O','k'],['P','k'],['\\','k']],
+      [['Rep','s'],['H','k'],['J','h','Ctrl'],['K','h','Shift'],['L','h','Alt'],[';','h','Cmd'],["'",'k']],
+      [['N','k'],['M','k'],[',','k'],['.','k'],['/','k'],['RSft','m']],
+      [['Sys','s','MO(5)'],['\u2191','k'],['\u2193','k'],['[','k'],[']','k'],['RAlt','m']]
+    ],
+    RB: null, RT: [['Hypr','m'],['Tab','k'],['Enter','l','Sym']]
+  },
+  {
+    name: 'Nav', desc: 'Vim Arrows + Navigation', act: 'Hold Space', color: '#43a047',
+    L: [
+      [T,T,T,T,T,T,T],[T,T,T,T,T,T,T],
+      [T,['Cmd','m'],['Alt','m'],['Shift','m'],['Ctrl','m'],T,T],
+      [T,['\u2318Z','k'],['\u2318X','k'],['\u2318C','k'],['\u2318V','k'],T],
+      [T,T,T,T,T]
+    ],
+    LB: T, LT: [['HELD','x'],T,T],
+    R: [
+      [T,T,T,T,T,T,T],
+      [T,T,['Home','k'],['PgUp','k'],['PgDn','k'],['End','k'],T],
+      [T,T,['\u2190','k'],['\u2193','k'],['\u2191','k'],['\u2192','k'],T],
+      [T,T,T,T,T,T],[T,T,T,T,T,T]
+    ],
+    RB: null, RT: [T,T,T]
+  },
+  {
+    name: 'Sym', desc: 'Symbols + Numpad', act: 'Hold Enter', color: '#f9a825',
+    L: [
+      [T,['!','k'],['@','k'],['#','k'],['$','k'],['%','k'],T],
+      [T,['^','k'],['&','k'],['{','k'],['}','k'],['|','k'],T],
+      [T,['Cmd','m'],['Alt','m'],['Shift','m'],['Ctrl','m'],['~','k'],T],
+      [T,['`','k'],['_','k'],['(','k'],[')','k'],T],
+      [T,T,T,['<','k'],['>','k']]
+    ],
+    LB: T, LT: [T,T,T],
+    R: [
+      [T,['=','k'],['7','k'],['8','k'],['9','k'],['+','k'],T],
+      [T,['\\','k'],['4','k'],['5','k'],['6','k'],['0','k'],T],
+      [T,['*','k'],['1','k'],['2','k'],['3','k'],['\u2013','k'],T],
+      [[',','k'],['.','k'],T,T,T,T],[T,T,T,T,T,T]
+    ],
+    RB: null, RT: [T,T,['HELD','x']]
+  },
+  {
+    name: 'Func', desc: 'F-Keys + Media', act: 'Hold Space + Enter', color: '#7b1fa2',
+    L: [
+      [T,['F1','k'],['F2','k'],['F3','k'],['F4','k'],['F5','k'],T],
+      [T,T,T,T,T,T,T],
+      [T,['Cmd','m'],['Alt','m'],['Shift','m'],['Ctrl','m'],T,T],
+      [T,T,T,T,T,T],[T,T,T,T,T]
+    ],
+    LB: T, LT: [['HELD','x'],T,T],
+    R: [
+      [T,['F6','k'],['F7','k'],['F8','k'],['F9','k'],['F10','k'],['F11','k']],
+      [T,T,T,['Bri+','k'],T,T,['F12','k']],
+      [T,T,['Prev','k'],['Vol\u2013','k'],['Vol+','k'],['Next','k'],T],
+      [T,T,T,T,['Play','k'],T],[T,T,T,T,T,T]
+    ],
+    RB: null, RT: [T,T,['HELD','x']]
+  },
+  {
+    name: 'Mouse', desc: 'Mouse Movement + Buttons', act: 'Hold Z+X (combo)', color: '#e91e63',
+    L: [
+      [T,T,T,T,T,T,T],[T,T,T,T,T,T,T],
+      [T,['Cmd','m'],['Alt','m'],['Shift','m'],['Ctrl','m'],T,T],
+      [T,T,T,T,T,T],[T,T,T,T,T]
+    ],
+    LB: T, LT: [['Btn1','k'],['Btn2','k'],T],
+    R: [
+      [T,T,T,T,T,T,T],
+      [T,T,['Scr\u2191','k'],['Mse\u2191','k'],['Scr\u2193','k'],T,T],
+      [T,T,['Mse\u2190','k'],['Mse\u2193','k'],['Mse\u2192','k'],T,T],
+      [T,['Btn1','k'],['Btn3','k'],['Btn2','k'],T,T],
+      [T,['Acc0','k'],['Acc1','k'],['Acc2','k'],T,T]
+    ],
+    RB: null, RT: [T,T,T]
+  },
+  {
+    name: 'System', desc: 'RGB + Audio + Bootloader', act: 'Hold Sys / MO(5)', color: '#d32f2f',
+    L: [
+      [['Audio','s'],T,T,T,T,T,['BOOT','d']],
+      [T,T,T,T,T,T,T],[T,T,T,T,T,T,T],[T,T,T,T,T,T],
+      [T,T,T,['DT\u2193','s'],['DT\u2191','s']]
+    ],
+    LB: ['DT','s','Print'], LT: [T,T,T],
+    R: [
+      [['BOOT','d'],T,T,T,T,T,T],[T,T,T,T,T,T,T],
+      [T,['RGB','s'],['Hue+','s'],['Sat+','s'],['Val+','s'],['Spd+','s'],T],
+      [['Mode','s'],['Hue\u2013','s'],['Sat\u2013','s'],['Val\u2013','s'],['Spd\u2013','s'],T],
+      [['HELD','x'],T,T,T,T,T]
+    ],
+    RB: null, RT: [T,T,T]
+  },
+  {
+    name: 'Gaming', desc: 'Standard QWERTY (no HRM/LT)', act: 'Toggle Game / TG(6)', color: '#76ff03',
+    L: [
+      [['Esc','k'],['1','k'],['2','k'],['3','k'],['4','k'],['5','k'],['F1','s']],
+      [['Tab','k'],['Q','k'],['W','k'],['E','k'],['R','k'],['T','k'],['F2','s']],
+      [['Caps','m'],['A','k'],['S','k'],['D','k'],['F','k'],['G','k'],['Game','s','TG(6)']],
+      [['LSft','m'],['Z','k'],['X','k'],['C','k'],['V','k'],['B','k']],
+      [['LCtrl','m'],['LAlt','m'],['LCmd','m'],['\u2190','k'],['\u2192','k']]
+    ],
+    LB: ['F5','s'], LT: [['Space','k'],['Bspc','k'],['LCtrl','m']],
+    R: [
+      [['F3','s'],['6','k'],['7','k'],['8','k'],['9','k'],['0','k'],['\u2013','k']],
+      [['F4','s'],['Y','k'],['U','k'],['I','k'],['O','k'],['P','k'],['\\','k']],
+      [['F5','s'],['H','k'],['J','k'],['K','k'],['L','k'],[';','k'],["'",'k']],
+      [['N','k'],['M','k'],[',','k'],['.','k'],['/','k'],['RSft','m']],
+      [['F9','s'],['\u2191','k'],['\u2193','k'],['[','k'],[']','k'],['RAlt','m']]
+    ],
+    RB: null, RT: [['RCtl','m'],['Tab','k'],['Enter','k']]
+  }
+];
+
+const BASE = LAYERS[0];
+
+// ─── QMK Keycodes (Base Layer) ───────────────────────────────────
+
+const QMK = {
+  L: [
+    ['KC_EQL','KC_1','KC_2','KC_3','KC_4','KC_5','KC_ESC'],
+    ['KC_TAB','KC_Q','KC_W','KC_E','KC_R','KC_T','CW_TOGG'],
+    ['KC_MEH','LGUI_T(KC_A)','LALT_T(KC_S)','LSFT_T(KC_D)','LCTL_T(KC_F)','KC_G','TG(_GAMING)'],
+    ['KC_LSFT','KC_Z','KC_X','KC_C','KC_V','KC_B'],
+    ['KC_LCTL','KC_LALT','KC_GRV','KC_LEFT','KC_RGHT']
+  ],
+  LB: 'KC_LCTL',
+  LT: ['LT(_NAV, KC_SPC)','KC_BSPC','KC_LGUI'],
+  R: [
+    ['KC_DEL','KC_6','KC_7','KC_8','KC_9','KC_0','KC_MINS'],
+    ['QK_LEAD','KC_Y','KC_U','KC_I','KC_O','KC_P','KC_BSLS'],
+    ['QK_REP','KC_H','RCTL_T(KC_J)','RSFT_T(KC_K)','LALT_T(KC_L)','RGUI_T(KC_SCLN)','KC_QUOT'],
+    ['KC_N','KC_M','KC_COMM','KC_DOT','KC_SLSH','KC_RSFT'],
+    ['MO(_SYSTEM)','KC_UP','KC_DOWN','KC_LBRC','KC_RBRC','KC_RALT']
+  ],
+  RB: null,
+  RT: ['KC_HYPR','KC_TAB','LT(_SYM, KC_ENT)']
+};
+
+// ─── Combos ──────────────────────────────────────────────────────
+
+const COMBOS = [
+  { pos: [['R','rows',2,2],['R','rows',2,3]], label: 'J + K', result: 'Escape', qmk: 'KC_ESC' },
+  { pos: [['L','rows',2,3],['L','rows',2,4]], label: 'D + F', result: 'Tab', qmk: 'KC_TAB' },
+  { pos: [['R','rows',2,3],['R','rows',2,4]], label: 'K + L', result: 'Backspace', qmk: 'KC_BSPC' },
+  { pos: [['L','rows',3,1],['L','rows',3,2]], label: 'Z + X', result: 'Mouse Layer (momentary)', qmk: 'MO(_MOUSE)' },
+];
+
+// ─── Key Type Metadata ───────────────────────────────────────────
+
+const TYPE_INFO = {
+  k: { name: 'Regular Key', bg: '#fff' },
+  m: { name: 'Modifier', bg: '#e5f5e0' },
+  h: { name: 'Home Row Mod', bg: '#dfeeff' },
+  l: { name: 'Layer-Tap', bg: '#f0e4fa' },
+  s: { name: 'Special Function', bg: '#fff6d6' },
+  d: { name: 'Danger', bg: '#ffe0e0' },
+  x: { name: 'Held Key', bg: '#e8e8e8' },
+  t: { name: 'Transparent', bg: '#f0f0f2' },
+};
+
+const SPECIAL_DESC = {
+  'CW': 'CapsWord toggle: capitalizes the next word, then automatically deactivates after space/punctuation.',
+  'Rep': 'Repeat Key: re-sends the last keycode that was pressed.',
+  'Leader': 'Leader Key: starts a leader key sequence for triggering custom actions.',
+  'Game': 'Toggle Gaming layer on/off. QMK shows this as TG(6): TG means "toggle" and 6 is the Gaming layer number.',
+  'Sys': 'Momentary System layer. QMK shows this as MO(5): MO means "momentary" and 5 is the System layer number.',
+  'Audio': 'Toggle keyboard audio feedback on/off.',
+  'DT': 'Dynamic Tapping Term helper. "Print" reports the current tapping-term value via the HID console.',
+  'DT\u2193': 'Decrease Dynamic Tapping Term by 5ms (makes taps register faster).',
+  'DT\u2191': 'Increase Dynamic Tapping Term by 5ms (gives more time for holds).',
+  'RGB': 'Toggle RGB LED matrix on/off.',
+  'Mode': 'Cycle to next RGB animation mode.',
+  'Hue+': 'Increase RGB hue.', 'Hue\u2013': 'Decrease RGB hue.',
+  'Sat+': 'Increase RGB saturation.', 'Sat\u2013': 'Decrease RGB saturation.',
+  'Val+': 'Increase RGB brightness.', 'Val\u2013': 'Decrease RGB brightness.',
+  'Spd+': 'Increase RGB animation speed.', 'Spd\u2013': 'Decrease RGB animation speed.',
+  'F1':'Function key F1','F2':'Function key F2','F3':'Function key F3',
+  'F4':'Function key F4','F5':'Function key F5','F9':'Function key F9','F12':'Function key F12',
+};
+
+const MOD_DESC = {
+  'Meh': 'Ctrl + Alt + Shift simultaneously',
+  'Hypr': 'Ctrl + Alt + Shift + Cmd simultaneously. QMK calls Cmd "GUI".',
+  'LSft': 'Left Shift', 'RSft': 'Right Shift',
+  'LCtrl': 'Left Control', 'RCtl': 'Right Control',
+  'LAlt': 'Left Alt (Option)', 'RAlt': 'Right Alt (Option)',
+  'LCmd': 'Left Command. QMK names this Left GUI (LGUI).',
+  'Cmd': 'Command. QMK uses the cross-platform GUI name for this modifier.',
+  'Caps': 'Caps Lock',
+};
+
+// ─── Utility ─────────────────────────────────────────────────────
+
+function getKeyAt(layerIdx, side, section, row, col) {
+  const layer = LAYERS[layerIdx];
+  if (section === 'rows') return layer[side]?.[row]?.[col] ?? null;
+  if (section === 'big') return layer[side === 'L' ? 'LB' : 'RB'];
+  if (section === 'thumb') return (layer[side === 'L' ? 'LT' : 'RT'])?.[col] ?? null;
+  return null;
+}
+
+function getQMKCode(side, section, row, col) {
+  if (section === 'rows') return QMK[side]?.[row]?.[col] ?? null;
+  if (section === 'big') return QMK[side === 'L' ? 'LB' : 'RB'];
+  if (section === 'thumb') return (QMK[side === 'L' ? 'LT' : 'RT'])?.[col] ?? null;
+  return null;
+}
+
+function posMatch(pos, side, section, row, col) {
+  return pos[0] === side && pos[1] === section && pos[2] === row && pos[3] === col;
+}
+
+function findCombosFor(side, section, row, col) {
+  return COMBOS.filter(c => c.pos.some(p => posMatch(p, side, section, row, col)));
+}
+
+function posLabel(side, section, row, col) {
+  const sName = side === 'L' ? 'Left' : 'Right';
+  if (section === 'rows') {
+    const rowNames = ['Number row', 'Top alpha', 'Home row', 'Bottom alpha', 'Bottom row'];
+    const colNames = side === 'L'
+      ? ['Outer pinky','Pinky','Ring','Middle','Index','Inner','Function']
+      : ['Function','Inner','Index','Middle','Ring','Pinky','Outer pinky'];
+    return `${sName} half \u2022 ${rowNames[row] || 'Row '+row} \u2022 ${colNames[col] || 'Col '+col}`;
+  }
+  if (section === 'big') return `${sName} half \u2022 Big key (inner edge)`;
+  if (section === 'thumb') {
+    const tNames = side === 'L' ? ['Primary thumb','Secondary thumb','Tertiary thumb'] : ['Tertiary thumb','Secondary thumb','Primary thumb'];
+    return `${sName} half \u2022 Thumb cluster \u2022 ${tNames[col] || 'Thumb '+col}`;
+  }
+  return `${sName} half`;
+}
+
+// ─── Rendering ───────────────────────────────────────────────────
+
+function makeKeyEl(data, col, baseData, accent, side, section, rowIdx, colIdx, interactive) {
+  const el = document.createElement('div');
+  el.className = 'key';
+
+  if (data === T || data === 0) {
+    el.classList.add('t');
+    if (baseData && baseData !== T) {
+      const lbl = document.createElement('span');
+      lbl.className = 'lbl';
+      lbl.textContent = baseData[0];
+      el.appendChild(lbl);
+    }
+  } else {
+    const [label, type, sub] = data;
+    el.classList.add(type);
+    if (type === 'x') el.style.setProperty('--accent', accent);
+    const lbl = document.createElement('span');
+    lbl.className = 'lbl';
+    lbl.textContent = label;
+    el.appendChild(lbl);
+    if (sub) {
+      const s = document.createElement('span');
+      s.className = 'sub';
+      s.textContent = sub;
+      el.appendChild(s);
+    }
+  }
+
+  if (staggerOn && col !== undefined) {
+    el.style.transform = `translateY(${STAGGER[col] || 0}px)`;
+  }
+
+  if (interactive !== false) {
+    el.dataset.side = side;
+    el.dataset.section = section;
+    el.dataset.row = rowIdx;
+    el.dataset.col = colIdx;
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      showDetail(side, section, rowIdx, colIdx, el);
+    });
+  } else {
+    el.style.cursor = 'default';
+  }
+
+  return el;
+}
+
+function renderHalf(container, layerData, sideKey, accent, interactive) {
+  const rows = layerData[sideKey];
+  const bigKey = layerData[sideKey === 'L' ? 'LB' : 'RB'];
+  const thumbKeys = layerData[sideKey === 'L' ? 'LT' : 'RT'];
+  const isLeft = sideKey === 'L';
+  const half = document.createElement('div');
+  half.className = 'half';
+
+  rows.forEach((row, ri) => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'row';
+    row.forEach((kd, ci) => {
+      const bk = getKeyAt(0, sideKey, 'rows', ri, ci);
+      rowEl.appendChild(makeKeyEl(kd, ci, bk, accent, sideKey, 'rows', ri, ci, interactive));
+    });
+    half.appendChild(rowEl);
+  });
+
+  const thumbArea = document.createElement('div');
+  thumbArea.className = 'thumb-area';
+  if (bigKey !== null && bigKey !== undefined) {
+    const bigRow = document.createElement('div');
+    bigRow.className = 'big-row ' + (isLeft ? 'align-right' : 'align-left');
+    const baseBig = getKeyAt(0, sideKey, 'big', 0, 0);
+    bigRow.appendChild(makeKeyEl(bigKey, undefined, baseBig, accent, sideKey, 'big', 0, 0, interactive));
+    thumbArea.appendChild(bigRow);
+  }
+  const thumbRow = document.createElement('div');
+  thumbRow.className = 'thumb-row ' + (isLeft ? 'align-right' : 'align-left');
+  thumbKeys.forEach((kd, ci) => {
+    const bk = getKeyAt(0, sideKey, 'thumb', 0, ci);
+    thumbRow.appendChild(makeKeyEl(kd, undefined, bk, accent, sideKey, 'thumb', 0, ci, interactive));
+  });
+  thumbArea.appendChild(thumbRow);
+  half.appendChild(thumbArea);
+  container.appendChild(half);
+}
+
+function renderKeyboard(layerIdx, container, interactive) {
+  container.innerHTML = '';
+  const layer = LAYERS[layerIdx];
+  const kbd = document.createElement('div');
+  kbd.className = 'keyboard' + (staggerOn ? ' stagger' : '');
+  renderHalf(kbd, layer, 'L', layer.color, interactive);
+  renderHalf(kbd, layer, 'R', layer.color, interactive);
+  container.appendChild(kbd);
+}
+
+function renderTabs() {
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = '';
+  LAYERS.forEach((layer, i) => {
+    const tab = document.createElement('div');
+    tab.className = 'tab' + (i === currentLayer ? ' active' : '');
+    tab.style.setProperty('--accent', layer.color);
+    if (i === currentLayer) tab.style.borderColor = layer.color;
+    tab.innerHTML = `${layer.name}<span class="num">${i}</span>`;
+    tab.onclick = () => switchLayer(i);
+    tabs.appendChild(tab);
+  });
+}
+
+function renderLayerInfo() {
+  const layer = LAYERS[currentLayer];
+  const info = document.getElementById('layerInfo');
+  info.style.borderLeftColor = layer.color;
+  info.innerHTML = `<span class="name">${layer.name}</span> ${layer.desc}<span class="act">&mdash; ${layer.act}</span>`;
+}
+
+function renderCombos() {
+  document.getElementById('combos').innerHTML =
+    '<div class="combo"><b>J+K</b> = Escape</div>' +
+    '<div class="combo"><b>D+F</b> = Tab</div>' +
+    '<div class="combo"><b>K+L</b> = Backspace</div>' +
+    '<div class="combo"><b>Z+X</b> = Mouse Layer</div>';
+}
+
+function renderLegend() {
+  const items = [
+    ['#fff','#c8c8d0','Regular'],['#e5f5e0','#8bc38b','Modifier'],
+    ['#dfeeff','#7db4f0','Home Row Mod'],['#f0e4fa','#c090e0','Layer-Tap'],
+    ['#fff6d6','#e0c060','Special'],['#f0f0f2','#ddd','Transparent'],
+    ['#ffe0e0','#e06060','Danger'],
+  ];
+  document.getElementById('legend').innerHTML = items.map(([bg, b, l]) =>
+    `<div class="legend-item"><div class="swatch" style="background:${bg};border-color:${b}"></div>${l}</div>`
+  ).join('');
+}
+
+function renderGlossary() {
+  const items = [
+    ['Cmd', 'macOS Command. QMK calls this <code>GUI</code>, so <code>LGUI</code>/<code>RGUI</code> mean left/right Command here.'],
+    ['Sys / MO(5)', '<code>MO</code> means the layer is active only while you hold the key. <code>5</code> is the System layer number.'],
+    ['Game / TG(6)', '<code>TG</code> means toggle. Press once to turn layer 6 on, then press again to leave Gaming.'],
+    ['CW', 'CapsWord toggle. It capitalizes the current word without needing Shift on every letter.'],
+    ['Rep', 'Repeat key. Re-sends the last keycode for repeated edits or repeated movement.'],
+    ['Meh / Hypr', '<code>Meh</code> = Ctrl+Alt+Shift. <code>Hypr</code> = Ctrl+Alt+Shift+Cmd.'],
+    ['Bri+ / RGB', '<code>Bri+</code> is brightness up. <code>RGB</code>, Hue, Sat, Val, and Spd control the Moonlander lighting.'],
+    ['DT', 'Dynamic Tapping Term tuning. Use it when tap-vs-hold feels too fast or too slow.'],
+  ];
+  document.getElementById('glossary').innerHTML = items.map(([term, desc]) =>
+    `<div class="glossary-card"><b>${term}</b><br>${desc}</div>`
+  ).join('');
+}
+
+function renderPrintAll() {
+  const pa = document.getElementById('printAll');
+  pa.innerHTML = '';
+  LAYERS.forEach((layer, i) => {
+    const sec = document.createElement('div');
+    sec.className = 'print-layer';
+    const h = document.createElement('h3');
+    h.textContent = `Layer ${i}: ${layer.name} \u2014 ${layer.desc} (${layer.act})`;
+    sec.appendChild(h);
+    const c = document.createElement('div');
+    renderKeyboard(i, c, false);
+    sec.appendChild(c);
+    pa.appendChild(sec);
+  });
+  const f = document.createElement('div');
+  f.style.cssText = 'text-align:center;font-size:11px;margin-top:10px;color:#555;';
+  f.innerHTML = 'Combos: J+K=Esc &middot; D+F=Tab &middot; K+L=Bspc &middot; Z+X=Mouse &nbsp;|&nbsp; HRM: Cmd-Alt-Shift-Ctrl (GASC; QMK calls Cmd "GUI")';
+  pa.appendChild(f);
+}
+
+// ─── Detail Panel ────────────────────────────────────────────────
+
+function showDetail(side, section, row, col, keyEl) {
+  // Highlight selected key
+  if (selectedKeyEl) selectedKeyEl.classList.remove('selected');
+  selectedKeyEl = keyEl || null;
+  if (selectedKeyEl) selectedKeyEl.classList.add('selected');
+
+  const kd = getKeyAt(currentLayer, side, section, row, col);
+  const bd = getKeyAt(0, side, section, row, col);
+  const effective = (kd === T && bd && bd !== T) ? bd : kd;
+  const isTransOnLayer = kd === T && currentLayer !== 0;
+  const qmk = getQMKCode(side, section, row, col);
+  const combos = findCombosFor(side, section, row, col);
+
+  let html = '<button class="detail-close" onclick="hideDetail()">&times;</button>';
+
+  if (!effective || effective === T) {
+    html += '<div style="text-align:center;padding:20px;color:var(--dim)">No key assigned at this position</div>';
+    document.getElementById('detailPanel').innerHTML = html;
+    document.getElementById('detailOverlay').classList.add('open');
+    return;
+  }
+
+  const [label, type, sub] = effective;
+  const ti = TYPE_INFO[type] || TYPE_INFO.k;
+
+  // Header
+  html += '<div class="detail-header">';
+  html += `<div class="key ${type}" style="width:64px;height:64px;font-size:17px;border-radius:9px;cursor:default;flex-shrink:0">`;
+  html += `<span class="lbl">${label}</span>`;
+  if (sub) html += `<span class="sub" style="font-size:11px">${sub}</span>`;
+  html += '</div><div class="detail-meta">';
+  html += `<span class="detail-badge" style="background:${ti.bg}">${ti.name}</span>`;
+  if (isTransOnLayer) html += `<span class="detail-badge trans-badge">Transparent on ${LAYERS[currentLayer].name}</span>`;
+  html += `<div class="detail-pos">${posLabel(side, section, row, col)}</div>`;
+  html += '</div></div>';
+
+  // Behavior
+  html += '<div class="detail-section"><h4>Behavior</h4><table class="detail-behavior">';
+  html += buildBehavior(type, label, sub, side);
+  html += '</table>';
+  // Extra notes for certain types
+  if (type === 'h') {
+    html += '<p class="detail-note">Flow Tap (150ms) prevents accidental holds during fast typing. Chordal Hold requires the second key to be on the opposite hand (with configured same-hand exceptions for macOS shortcuts and Emacs bindings).</p>';
+  }
+  if (type === 'd') {
+    html += '<p class="detail-note detail-warn">WARNING: Enters bootloader mode. The keyboard will disconnect from USB. Only press when you intend to flash firmware.</p>';
+  }
+  html += '</div>';
+
+  // QMK Keycode
+  if (qmk) {
+    html += `<div class="detail-section"><h4>QMK Keycode</h4><code class="detail-qmk">${qmk}</code></div>`;
+  }
+
+  // Combos
+  if (combos.length > 0) {
+    html += '<div class="detail-section"><h4>Combos</h4>';
+    combos.forEach(c => {
+      html += `<div class="detail-combo"><b>${c.label}</b> &rarr; <strong>${c.result}</strong>`;
+      if (c.qmk) html += ` <span style="color:var(--dim);font-size:11px">(${c.qmk})</span>`;
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Cross-layer reference
+  html += '<div class="detail-section"><h4>On Each Layer</h4><table class="detail-layers">';
+  LAYERS.forEach((layer, li) => {
+    const lkd = getKeyAt(li, side, section, row, col);
+    let cell;
+    if (lkd === T || lkd === 0) {
+      // Show what it falls through to
+      const fallback = getKeyAt(0, side, section, row, col);
+      const fbLabel = (fallback && fallback !== T) ? fallback[0] + (fallback[2] ? ' / ' + fallback[2] : '') : '?';
+      cell = `<span class="dim">transparent \u2192 ${fbLabel}</span>`;
+    } else {
+      const [ll, lt, ls] = lkd;
+      const typeTag = lt !== 'k' ? ` <span style="opacity:0.5;font-size:10px">${(TYPE_INFO[lt]||{}).name||''}</span>` : '';
+      cell = ll + (ls ? ` / ${ls}` : '') + typeTag;
+    }
+    const cur = li === currentLayer ? ' class="current-layer"' : '';
+    html += `<tr${cur}><td class="layer-dot" style="color:${layer.color}">&bull;</td>`;
+    html += `<td class="layer-name">${layer.name}</td><td>${cell}</td></tr>`;
+  });
+  html += '</table></div>';
+
+  document.getElementById('detailPanel').innerHTML = html;
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function buildBehavior(type, label, sub, side) {
+  const isRight = side === 'R';
+  switch (type) {
+    case 'h': {
+      const names = {
+        'Cmd': isRight ? 'Right Command (QMK GUI)' : 'Left Command (QMK GUI)',
+        'Alt': 'Left Alt (Option)', // Always LALT to avoid AltGr
+        'Shift': isRight ? 'Right Shift' : 'Left Shift',
+        'Ctrl': isRight ? 'Right Control' : 'Left Control',
+      };
+      return `<tr><td>When tapped</td><td>Sends <b>${label}</b></td></tr>` +
+             `<tr><td>When held</td><td>${names[sub] || sub}</td></tr>`;
+    }
+    case 'l': {
+      const layerNames = { 'Nav': 'Nav layer (Layer 1)', 'Sym': 'Sym layer (Layer 2)' };
+      return `<tr><td>When tapped</td><td>Sends <b>${label}</b></td></tr>` +
+             `<tr><td>When held</td><td>Activates ${layerNames[sub] || sub}</td></tr>`;
+    }
+    case 'm':
+      return `<tr><td>When held</td><td>${MOD_DESC[label] || label}</td></tr>`;
+    case 's':
+      return `<tr><td>Function</td><td>${SPECIAL_DESC[label] || label}</td></tr>`;
+    case 'd':
+      return '<tr><td>Function</td><td>Enter bootloader mode for firmware flashing</td></tr>';
+    case 'x':
+      return `<tr><td>Status</td><td>Being <b>held</b> to activate the ${LAYERS[currentLayer].name} layer</td></tr>`;
+    default:
+      return `<tr><td>When pressed</td><td>Sends <b>${label}</b></td></tr>`;
+  }
+}
+
+function hideDetail() {
+  if (selectedKeyEl) { selectedKeyEl.classList.remove('selected'); selectedKeyEl = null; }
+  document.getElementById('detailOverlay').classList.remove('open');
+}
+
+// ─── Interaction ─────────────────────────────────────────────────
+
+function switchLayer(idx) {
+  hideDetail();
+  currentLayer = idx;
+  renderTabs();
+  renderLayerInfo();
+  renderKeyboard(idx, document.getElementById('keyboard'));
+}
+
+function toggleStagger() {
+  staggerOn = !staggerOn;
+  document.getElementById('staggerBtn').textContent = `Column Stagger: ${staggerOn ? 'On' : 'Off'}`;
+  renderKeyboard(currentLayer, document.getElementById('keyboard'));
+  renderPrintAll();
+}
+
+// Close detail on overlay click
+document.getElementById('detailOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) hideDetail();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'Escape') { hideDetail(); return; }
+  const n = parseInt(e.key);
+  if (n >= 0 && n <= 6) { e.preventDefault(); switchLayer(n); }
+});
+
+// ─── Init ────────────────────────────────────────────────────────
+switchLayer(0);
+renderCombos();
+renderLegend();
+renderGlossary();
+renderPrintAll();
+</script>
+</body>
+</html>

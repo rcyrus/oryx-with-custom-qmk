@@ -9,15 +9,15 @@ Stack: macOS (Darwin) / Alacritty 0.18.0-dev / Zellij 0.44.0 / Emacs 30.2
 
 ## Table of Contents
 
- 1. Quick Start
- 2. Understanding the Layer System
- 3. Home Row Mods Explained
- 4. Thumb Cluster Explained
- 5. Combos Explained
- 6. Feature Reference (CapsWord, Repeat Key, Leader Key, Key Overrides)
- 7. Gaming Mode
- 8. Integration with Alacritty / Zellij / Emacs
- 9. LED Color Guide
+1.  Quick Start
+2.  Understanding the Layer System
+3.  Home Row Mods Explained
+4.  Thumb Cluster Explained
+5.  Combos Explained
+6.  Feature Reference (CapsWord, Repeat Key, Leader Key, Key Overrides)
+7.  Gaming Mode
+8.  Integration with Alacritty / Zellij / Emacs
+9.  LED Color Guide
 10. Tuning Guide
 11. Oryx Compatibility
 
@@ -30,7 +30,8 @@ Stack: macOS (Darwin) / Alacritty 0.18.0-dev / Zellij 0.44.0 / Emacs 30.2
 1. Open https://configure.zsa.io/moonlander/layouts/EnBmG in a browser.
 2. Click "Compile" (or use the local QMK build if you have custom_features.c changes).
 3. Enter bootloader: hold the leftmost or rightmost inner-top key while plugging
-   in USB, or press MO(System) + top-inner-left/right key (marked BOOT).
+   in USB, or hold `Sys` (`MO(5)`) and press the top-inner-left/right key
+   marked `BOOT`.
 4. Use Keymapp (ZSA's flashing tool) to flash the compiled .bin file.
 5. After flashing, the keyboard reboots. LEDs should show the Tokyo Night
    blue/cyan/magenta gradient — you are on Layer 0 (Base).
@@ -41,13 +42,13 @@ Stack: macOS (Darwin) / Alacritty 0.18.0-dev / Zellij 0.44.0 / Emacs 30.2
   as expected for regular typing.
 - If a key "sticks" as a modifier instead of typing a letter, you are holding
   it too long. Read section 3 (Home Row Mods) and section 10 (Tuning).
-- Test the thumb keys: tap Space (left big thumb) and Enter (right big thumb).
-  Hold them briefly to confirm Nav and Sym layers activate (watch the LEDs
-  change to green or amber).
+- Test the layer-tap thumb keys: tap Space on the left lower thumb row and
+  Enter on the right lower thumb row. Hold them briefly to confirm Nav and
+  Sym layers activate (watch the LEDs change to green or amber).
 
 ### If something goes wrong
 
-- Gaming mode stuck? Press the left inner key on row 3 (TG toggle) again.
+- Gaming mode stuck? Press the `Game` key (`TG(6)`) again.
 - Caps stuck on? Press both Shift keys, or tap Space/Enter to deactivate.
 - Need to reflash? The bootloader keys are on the System layer (section 2),
   or hold the inner-top-left key while plugging in.
@@ -66,8 +67,8 @@ Layer  Name     Activation              Color Theme
   2    Sym      Hold Enter              Amber / Gold
   3    Func     Hold Space AND Enter    Amethyst / Purple
   4    Mouse    Combo Z+X (hold both)   Coral / Pink
-  5    System   Hold MO(5) key          Ember / Red
-  6    Gaming   Toggle TG(6)            Neon Lime
+  5    System   Hold Sys / MO(5)        Ember / Red
+  6    Gaming   Toggle Game / TG(6)     Neon Lime
 ```
 
 ### How layers combine
@@ -83,6 +84,20 @@ The Func layer (3) activates automatically when BOTH Space and Enter are
 held simultaneously. You do not need a dedicated key for it. This is QMK's
 Tri Layer feature: Nav (1) + Sym (2) = Func (3).
 
+### Diagram legend
+
+- `Cmd` = macOS Command. QMK calls this modifier `GUI`, so `LGUI` / `RGUI`
+  in the code mean left/right Command.
+- `A/Cmd` means "tap A, hold Command". The part before the slash is the tap
+  behavior; the part after the slash is the hold behavior.
+- `Sys` = System layer key. In QMK terms this is `MO(5)`, where `MO` means
+  "momentary" and `5` is the layer number.
+- `Game` = Gaming toggle key. In QMK terms this is `TG(6)`, where `TG` means
+  "toggle" and `6` is the layer number.
+- `CW` = CapsWord toggle. `Rep` = Repeat Key. `Meh` = Ctrl+Alt+Shift.
+  `Hypr` = Ctrl+Alt+Shift+Cmd.
+- `___` = transparent on that layer; the key falls through to the layer below.
+- `>>>>> / HELD` = the key you keep pressed to stay on that layer.
 
 ### Layer 0: Base (QWERTY + Home Row Mods)
 
@@ -92,25 +107,29 @@ Tri Layer feature: Nav (1) + Sym (2) = Func (3).
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | Tab  |  Q   |  W   |  E   |  R   |  T   |  CW  |     |Leader|  Y   |  U   |  I   |  O   |  P   |  \   |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
-| Meh  | A/Gui| S/Alt| D/Sft| F/Ctl|  G   |TG(6) |     | Rep  |  H   | J/Ctl| K/Sft| L/Alt| ;/Gui|  '   |
+| Meh  | A/Cmd| S/Alt|D/Shift|F/Ctrl|  G  | Game |     | Rep  |  H   |J/Ctrl|K/Shift|L/Alt| ;/Cmd|  '   |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | LSft |  Z   |  X   |  C   |  V   |  B   |             |  N   |  M   |  ,   |  .   |  /   | RSft |
 |------+------+------+------+------+------+             +------+------+------+------+------+------|
-| LCtl | LAlt |  `   |  [   |  ]   |                           | MO(5)|  Up  | Down | Left |Right | RAlt |
+|LCtrl | LAlt |  `   | Left |Right |                           |  Up  | Down |  [   |  ]   | RAlt |
 `------+------+------+------+------+------.             .------+------+------+------+------+------'
-                                    | LGui |             |      |
+                                    |LCtrl |            |  Sys |
                              ,------+------+------.     ,------+------+------.
-                             |Space/| Bspc | LCtl |     | Hypr | Tab  |Enter/|
+                             |Space/| Bspc | LCmd |     | Hypr | Tab  |Enter/|
                              | Nav  |      |      |     |      |      | Sym  |
                              `------+------+------'     `------+------+------'
 ```
 
 Notes:
-- `A/Gui` means A on tap, Left GUI (Cmd) on hold. See section 3.
-- `Space/Nav` means Space on tap, activates Nav layer on hold.
-- `CW` = CapsWord toggle. `Rep` = Repeat Key. `Leader` = Leader Key.
-- `Meh` = Ctrl+Alt+Shift (held). `Hypr` = Ctrl+Alt+Shift+Gui (held).
 
+- The left thumb pod is now swapped: the upper thumb-pod key is `LCtrl`,
+  and the inner thumb-row key is `LCmd`.
+- Left/right arrows are back on the left-hand cluster. `[` and `]` now live
+  on the right-hand cluster next to Up/Down.
+- `A/Cmd` means A on tap, Command on hold. See section 3.
+- `Space/Nav` means Space on tap, activates Nav layer on hold.
+- `Sys` is the System layer key (`MO(5)` in QMK).
+- `Game` is the Gaming toggle (`TG(6)` in QMK).
 
 ### Layer 1: Nav (Hold Space)
 
@@ -120,7 +139,7 @@ Notes:
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | ___  | ___  | ___  | ___  | ___  | ___  | ___  |     | ___  | ___  | Home | PgUp | PgDn | End  | ___  |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
-| ___  | GUI  | Alt  | Shft | Ctrl | ___  | ___  |     | ___  | ___  | Left | Down |  Up  |Right | ___  |
+| ___  | Cmd  | Alt  |Shift | Ctrl | ___  | ___  |     | ___  | ___  | Left | Down |  Up  |Right | ___  |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | ___  |Cmd+Z |Cmd+X |Cmd+C |Cmd+V | ___  |             | ___  | ___  | ___  | ___  | ___  | ___  |
 |------+------+------+------+------+------+             +------+------+------+------+------+------|
@@ -137,11 +156,11 @@ Right hand: Vim-style HJKL navigation. UIOP for Home/PgUp/PgDn/End.
 Left home row: plain modifiers (no tap function) for combining with arrows.
 
 Usage examples:
+
 - Hold Space + J = Left arrow
 - Hold Space + Shift(D) + K = Shift+Down (select text downward)
 - Hold Space + Ctrl(F) + L = Ctrl+Up (Emacs: scroll up one line)
 - Z/X/C/V on this layer send Cmd+Z/X/C/V (macOS undo/cut/copy/paste)
-
 
 ### Layer 2: Sym (Hold Enter)
 
@@ -151,7 +170,7 @@ Usage examples:
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | ___  |  ^   |  &   |  {   |  }   |  |   | ___  |     | ___  |  \   |  4   |  5   |  6   |  0   | ___  |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
-| ___  | GUI  | Alt  | Shft | Ctrl |  ~   | ___  |     | ___  |  *   |  1   |  2   |  3   |  -   | ___  |
+| ___  | Cmd  | Alt  |Shift | Ctrl |  ~   | ___  |     | ___  |  *   |  1   |  2   |  3   |  -   | ___  |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | ___  |  `   |  _   |  (   |  )   | ___  |             |  ,   |  .   | ___  | ___  | ___  | ___  |
 |------+------+------+------+------+------+             +------+------+------+------+------+------|
@@ -166,11 +185,11 @@ Usage examples:
 
 Right hand: numpad layout (7-8-9 on top, 1-2-3 on home, 0 on the right).
 Left hand: symbols on the upper rows, brackets grouped logically:
-  - E/R = { }   (curly braces)
-  - C/V = ( )   (parentheses)
-  - [/] on bottom row = < > (angle brackets)
-Left home row: plain modifiers for combining with numbers/symbols.
 
+- E/R = { } (curly braces)
+- C/V = ( ) (parentheses)
+- [/] on bottom row = < > (angle brackets)
+  Left home row: plain modifiers for combining with numbers/symbols.
 
 ### Layer 3: Func (Hold Space AND Enter)
 
@@ -178,9 +197,9 @@ Left home row: plain modifiers for combining with numbers/symbols.
 ,------+------+------+------+------+------+------.     ,------+------+------+------+------+------+------.
 | ___  |  F1  |  F2  |  F3  |  F4  |  F5  | ___  |     | ___  |  F6  |  F7  |  F8  |  F9  | F10  | F11  |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
-| ___  | ___  | ___  | ___  | ___  | ___  | ___  |     | ___  | ___  | ___  | BriU | ___  | ___  | F12  |
+| ___  | ___  | ___  | ___  | ___  | ___  | ___  |     | ___  | ___  | ___  | Bri+ | ___  | ___  | F12  |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
-| ___  | GUI  | Alt  | Shft | Ctrl | ___  | ___  |     | ___  | ___  | Prev |Vol-  |Vol+  | Next | ___  |
+| ___  | Cmd  | Alt  |Shift | Ctrl | ___  | ___  |     | ___  | ___  | Prev |Vol-  |Vol+  | Next | ___  |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | ___  | ___  | ___  | ___  | ___  | ___  |             | ___  | ___  | ___  | ___  | Play | ___  |
 |------+------+------+------+------+------+             +------+------+------+------+------+------|
@@ -200,7 +219,6 @@ Usage: Hold Space with left thumb, hold Enter with right thumb, then tap
 the desired F-key or media control. Both thumbs are occupied, so everything
 you need is on the finger rows.
 
-
 ### Layer 4: Mouse (Hold Z+X)
 
 ```
@@ -209,7 +227,7 @@ you need is on the finger rows.
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | ___  | ___  | ___  | ___  | ___  | ___  | ___  |     | ___  | ___  |Scr Up|Mse Up|Scr Dn| ___  | ___  |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
-| ___  | GUI  | Alt  | Shft | Ctrl | ___  | ___  |     | ___  | ___  |Mse L |Mse Dn|Mse R | ___  | ___  |
+| ___  | Cmd  | Alt  |Shift | Ctrl | ___  | ___  |     | ___  | ___  |Mse L |Mse Dn|Mse R | ___  | ___  |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | ___  | ___  | ___  | ___  | ___  | ___  |             | ___  | Btn1 | Btn3 | Btn2 | ___  | ___  |
 |------+------+------+------+------+------+             +------+------+------+------+------+------|
@@ -228,8 +246,7 @@ Scroll wheel on U/O positions. Buttons on bottom row and left thumb cluster.
 Acceleration keys on the bottom right: Accel0 (slow), Accel1 (medium),
 Accel2 (fast).
 
-
-### Layer 5: System (Hold MO(5) — right bottom inner key)
+### Layer 5: System (`Sys` / hold `MO(5)` — right bottom inner key)
 
 ```
 ,------+------+------+------+------+------+------.     ,------+------+------+------+------+------+------.
@@ -241,7 +258,7 @@ Accel2 (fast).
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | ___  | ___  | ___  | ___  | ___  | ___  |             |RGBMod|RGB H-|RGB S-|RGB V-|RGB P-| ___  |
 |------+------+------+------+------+------+             +------+------+------+------+------+------|
-| ___  | ___  | ___  |DT Dn |DT Up |DT Prn|                           | ___  | ___  | ___  | ___  | ___  | ___  |
+| ___  | ___  | ___  |DT Dn |DT Up |                           | HELD | ___  | ___  | ___  | ___  | ___  |
 `------+------+------+------+------+------.             .------+------+------+------+------+------'
                                     |DT Prn|             |      |
                              ,------+------+------.     ,------+------+------.
@@ -257,8 +274,7 @@ of each half.
 RGB controls are on the right home/bottom rows. DT (Dynamic Tapping Term)
 controls are on the left bottom row — see section 10.
 
-
-### Layer 6: Gaming (Toggle TG(6))
+### Layer 6: Gaming (toggle `Game` / `TG(6)`)
 
 ```
 ,------+------+------+------+------+------+------.     ,------+------+------+------+------+------+------.
@@ -266,22 +282,23 @@ controls are on the left bottom row — see section 10.
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | Tab  |  Q   |  W   |  E   |  R   |  T   |  F2  |     |  F4  |  Y   |  U   |  I   |  O   |  P   |  \   |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
-| Caps |  A   |  S   |  D   |  F   |  G   |TG(6) |     |  F5  |  H   |  J   |  K   |  L   |  ;   |  '   |
+| Caps |  A   |  S   |  D   |  F   |  G   | Game |     |  F5  |  H   |  J   |  K   |  L   |  ;   |  '   |
 |------+------+------+------+------+------+------|     |------+------+------+------+------+------+------|
 | LSft |  Z   |  X   |  C   |  V   |  B   |             |  N   |  M   |  ,   |  .   |  /   | RSft |
 |------+------+------+------+------+------+             +------+------+------+------+------+------|
-| LCtl | LAlt | LGui | Left |Right |                           |  F9  |  Up  | Down |  [   |  ]   | RAlt |
+|LCtrl | LAlt | LCmd | Left |Right |                           |  F9  |  Up  | Down |  [   |  ]   | RAlt |
 `------+------+------+------+------+------.             .------+------+------+------+------+------'
                                     |  F5  |             |      |
                              ,------+------+------.     ,------+------+------.
-                             |Space | Bspc | LCtl |     | RCtl | Tab  |Enter |
+                             |Space | Bspc |LCtrl |     |RCtrl | Tab  |Enter |
                              |      |      |      |     |      |      |      |
                              `------+------+------'     `------+------+------'
 ```
 
 Standard keyboard: no home row mods, no layer-taps, no combos.
 WASD works without any timing considerations. F-keys on inner columns.
-Toggle back to Base by pressing TG(6) again (same position, left inner row 3).
+Toggle back to Base by pressing `Game` (`TG(6)`) again (same position, left
+inner row 3).
 
 ---
 
@@ -294,10 +311,10 @@ modifier. The layout uses GASC order (from pinky to index):
 
 ```
 Left hand:                    Right hand:
-A = GUI (Cmd)                 J = Ctrl
+A = Cmd (QMK GUI)             J = Ctrl
 S = Alt (Option)              K = Shift
 D = Shift                     L = Alt (Option)
-F = Ctrl                      ; = GUI (Cmd)
+F = Ctrl                      ; = Cmd (QMK GUI)
 ```
 
 This means your modifiers are always under your fingers. No reaching for
@@ -312,9 +329,10 @@ corner keys.
   action, and the middle finger is the second-strongest.
 - Alt on the ring finger (S/L): Alt is used less often than Ctrl or Shift.
   Note: L uses LALT (not RALT) to avoid triggering AltGr behavior on macOS.
-- GUI on the pinky (A/;): Cmd is used for macOS shortcuts (Cmd+C, Cmd+V)
-  which tend to be deliberate, not speed-critical. The pinky gets extra
-  tapping term (+40ms) to compensate for its slower movement.
+- Command on the pinky (A/;): QMK calls this modifier `GUI`, but on macOS it
+  is the Command key. Cmd is used for shortcuts like Cmd+C and Cmd+V, which
+  tend to be deliberate, not speed-critical. The pinky gets extra tapping
+  term (+40ms) to compensate for its slower movement.
 
 ### How to use them
 
@@ -323,11 +341,13 @@ normal speed, Flow Tap ensures the key always registers as a tap.
 
 **To use the modifier:** Press and hold the key, then tap another key.
 For example:
+
 - Hold F, tap S = Ctrl+S (save in Emacs)
 - Hold D, tap Q = Shift+Q (capital Q)
 - Hold A, tap C = Cmd+C (copy on macOS)
 
 **Combining modifiers:** Hold multiple home row keys simultaneously.
+
 - Hold D + F, tap A = Ctrl+Shift+A
 - Hold A + D, tap Z = Cmd+Shift+Z (redo on macOS)
 
@@ -343,7 +363,7 @@ The first week will feel slow. Common issues:
 2. **Same-hand modifier+key fails:** Chordal Hold requires the second key to
    be on the opposite hand by default. Exceptions are configured for common
    same-hand shortcuts:
-   - GUI (A) + Z/X/C/V/S/W/Q/E/R/T = macOS Cmd shortcuts
+   - Cmd (A) + Z/X/C/V/S/W/Q/E/R/T = macOS shortcuts
    - Ctrl (F) + Z/X/C/V/A/S/D/Q/W/E/R/T/G/B = Emacs C-key shortcuts
    - Shift (D) + all left-hand letters = capitalize
    - Shift (K) + all right-hand letters = capitalize
@@ -357,7 +377,8 @@ The first week will feel slow. Common issues:
 ### Practice tips
 
 - Start by using home row mods only for Emacs. Keep using the physical
-  modifiers (LCtl, LAlt, etc.) for everything else until comfortable.
+  modifiers (`LCtrl`, `LAlt`, `LCmd`, etc.) for everything else until
+  comfortable.
 - Practice Ctrl+X sequences: hold F, tap X, release both. Then the second
   key. This is a common source of frustration early on.
 - If you frequently misfire, temporarily increase the tapping term via the
@@ -367,47 +388,54 @@ The first week will feel slow. Common issues:
 
 ## 4. Thumb Cluster Explained
 
-The Moonlander has three thumb keys per side. This layout assigns them as:
+The Moonlander thumb area is better thought of as an upper thumb pod plus a
+three-key lower thumb row on each side. On the Base layer, the left upper pod
+key is assigned and the right upper pod key is unused.
 
 ```
-LEFT THUMB                        RIGHT THUMB
-,--------------------.            ,--------------------.
-| Space/Nav | Bspc | LCtl |      | Hypr | Tab | Enter/Sym |
-| (big key) |      |      |      |      |     | (big key) |
-`--------------------'            `--------------------'
+LEFT THUMB AREA                          RIGHT THUMB AREA
+                ,------.                                ,------.
+                |LCtrl |                                | ___  |
+                `------'                                `------'
+         ,------+------+------.                 ,------+------+------.
+         |Space/| Bspc | LCmd |                 | Hypr | Tab  |Enter/|
+         | Nav  |      |      |                 |      |      | Sym  |
+         `------+------+------'                 `------+------+------'
 ```
 
-### Left thumb
+### Left thumb area
 
-| Key | Tap | Hold | Notes |
-|-----|-----|------|-------|
-| Big key | Space | Nav layer | Most important key. Tapping term -20ms (180ms) for fast layer access. |
-| Middle | Backspace | Backspace (no hold) | Plain key. Shift+Bspc = Delete (key override). |
-| Inner | LCtrl | LCtrl | Dedicated Ctrl for when you do not want to use home row Ctrl. Useful during the learning period. |
+| Position      | Tap       | Hold                | Notes                                                                                |
+| ------------- | --------- | ------------------- | ------------------------------------------------------------------------------------ |
+| Upper pod key | LCtrl     | LCtrl               | Dedicated physical Ctrl. This is the key that used to be Command and is now swapped. |
+| Lower outer   | Space     | Nav layer           | Main layer-tap thumb key. Tapping term -20ms (180ms) for fast layer access.          |
+| Lower middle  | Backspace | Backspace (no hold) | Plain key. Shift+Bspc = Delete (key override).                                       |
+| Lower inner   | LCmd      | LCmd                | Dedicated physical Command key (`LGUI` in QMK naming).                               |
 
-### Right thumb
+### Right thumb area
 
-| Key | Tap | Hold | Notes |
-|-----|-----|------|-------|
-| Big key | Enter | Sym layer | Tapping term -20ms (180ms). |
-| Middle | Tab | Tab (no hold) | Plain key. |
-| Inner | Hyper | Hyper | Ctrl+Alt+Shift+Gui. Useful for application-level hotkeys that never conflict with anything. |
+| Position      | Tap            | Hold           | Notes                                                                                             |
+| ------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------- |
+| Upper pod key | Unused on Base | Unused on Base | Transparent on Base; used on some other layers.                                                   |
+| Lower outer   | Hyper          | Hyper          | Ctrl+Alt+Shift+Cmd. Useful for application-level hotkeys that rarely conflict with anything else. |
+| Lower middle  | Tab            | Tab (no hold)  | Plain key.                                                                                        |
+| Lower inner   | Enter          | Sym layer      | Main layer-tap thumb key. Tapping term -20ms (180ms).                                             |
 
 ### Tri Layer interaction
 
-When both big thumb keys are held: Space (Nav) + Enter (Sym) = Func layer
-activates automatically. This gives you F-keys and media controls without
-any additional key. The technique:
+When both layer-tap thumb keys are held, Space (Nav) + Enter (Sym) = Func
+layer. This gives you F-keys and media controls without any additional key.
+The technique:
 
 1. Press and hold Space with left thumb.
 2. Press and hold Enter with right thumb.
 3. Tap F1-F12 on the number row, or media keys on the right home row.
 4. Release both thumbs to return to Base.
 
-### Why the big keys are layer-taps
+### Why Space and Enter are layer-taps
 
 Space and Enter are the most frequently tapped keys, so they belong on the
-strongest fingers (thumbs). Making them double as layer activators means your
+strongest thumb positions. Making them double as layer activators means your
 fingers never leave the home row to access navigation or symbols.
 
 ---
@@ -417,12 +445,12 @@ fingers never leave the home row to access navigation or symbols.
 Combos are two keys pressed simultaneously that produce a different output.
 Four combos are defined:
 
-| Keys | Output | Mnemonic |
-|------|--------|----------|
-| J + K | Escape | Right-hand home row, quick press. Vim users will feel at home. |
-| D + F | Tab | Left-hand home row. Replaces reaching for the Tab key. |
-| K + L | Backspace | Right-hand home row. Deletes without moving to thumb. |
-| Z + X | Mouse layer (momentary) | Bottom-left. Hold both to stay in Mouse mode. |
+| Keys  | Output                  | Mnemonic                                                       |
+| ----- | ----------------------- | -------------------------------------------------------------- |
+| J + K | Escape                  | Right-hand home row, quick press. Vim users will feel at home. |
+| D + F | Tab                     | Left-hand home row. Replaces reaching for the Tab key.         |
+| K + L | Backspace               | Right-hand home row. Deletes without moving to thumb.          |
+| Z + X | Mouse layer (momentary) | Bottom-left. Hold both to stay in Mouse mode.                  |
 
 ### Timing
 
@@ -458,6 +486,7 @@ J and K. This is handled by `combo_should_trigger()` in the firmware.
 Shift), or tap the CW toggle key (left inner column, row 2).
 
 **Behavior while active:**
+
 - Letters are automatically shifted (typed as capitals).
 - The `-` key types `_` instead (useful for SCREAMING_SNAKE_CASE).
 - Numbers, Backspace, Delete, and `_` continue CapsWord without deactivating.
@@ -471,7 +500,6 @@ while CapsWord is active.
 **Use case:** Type `MY_CONSTANT_NAME` by activating CapsWord, then typing
 `my-constant-name`. The letters auto-capitalize and dashes become underscores.
 
-
 ### Repeat Key
 
 **Location:** Right inner column, row 3 (between the right letter block and
@@ -484,7 +512,7 @@ the same modifiers. Press it multiple times for rapid repetition.
 press Repeat to get the "opposite" key:
 
 | Last pressed | Alt-Repeat sends |
-|--------------|------------------|
+| ------------ | ---------------- |
 | Left arrow   | Right arrow      |
 | Right arrow  | Left arrow       |
 | Up arrow     | Down arrow       |
@@ -498,7 +526,6 @@ press Repeat to get the "opposite" key:
 alt-repeat to go back. Useful in Emacs buffer navigation and Zellij pane
 switching.
 
-
 ### Leader Key
 
 **Location:** Right inner column, row 2 (above Repeat Key).
@@ -510,17 +537,17 @@ is recognized.
 
 **Defined sequences:**
 
-| Sequence | Sends | Emacs command |
-|----------|-------|---------------|
-| Leader, x, s | C-x C-s | save-buffer |
-| Leader, x, f | C-x C-f | find-file |
-| Leader, x, b | C-x b | switch-to-buffer |
-| Leader, x, k | C-x k | kill-buffer |
-| Leader, x, 0 | C-x 0 | delete-window |
-| Leader, x, 1 | C-x 1 | delete-other-windows |
-| Leader, x, 2 | C-x 2 | split-window-below |
-| Leader, x, 3 | C-x 3 | split-window-right |
-| Leader, g | C-x g | magit-status |
+| Sequence     | Sends   | Emacs command             |
+| ------------ | ------- | ------------------------- |
+| Leader, x, s | C-x C-s | save-buffer               |
+| Leader, x, f | C-x C-f | find-file                 |
+| Leader, x, b | C-x b   | switch-to-buffer          |
+| Leader, x, k | C-x k   | kill-buffer               |
+| Leader, x, 0 | C-x 0   | delete-window             |
+| Leader, x, 1 | C-x 1   | delete-other-windows      |
+| Leader, x, 2 | C-x 2   | split-window-below        |
+| Leader, x, 3 | C-x 3   | split-window-right        |
+| Leader, g    | C-x g   | magit-status              |
 | Leader, c, c | C-c C-c | context-dependent confirm |
 
 **Why use Leader instead of pressing Ctrl directly?** The Leader key converts
@@ -532,13 +559,12 @@ multi-chord Emacs sequences into simple letter sequences. Instead of
 learning period. If you are struggling with Ctrl+X sequences via home row
 mods, use Leader sequences instead.
 
-
 ### Key Overrides
 
 One key override is defined:
 
-| Input | Output | Purpose |
-|-------|--------|---------|
+| Input             | Output | Purpose                                                                       |
+| ----------------- | ------ | ----------------------------------------------------------------------------- |
 | Shift + Backspace | Delete | Forward-delete without reaching. Works with any Shift (home row or physical). |
 
 ---
@@ -547,19 +573,20 @@ One key override is defined:
 
 ### Entering Gaming mode
 
-Press TG(6) — the left inner column key on row 3 (between the CapsWord
-toggle and the left half's inner column). The LEDs change to neon lime.
+Press `Game` (`TG(6)`) — the left inner column key on row 3 (between the
+CapsWord toggle and the left half's inner column). The LEDs change to neon
+lime.
 
 ### What changes
 
-| Feature | Base layer | Gaming layer |
-|---------|-----------|--------------|
-| Home row mods | Active (A=Gui, S=Alt, etc.) | Disabled — all plain letters |
-| Layer-tap thumbs | Space=Nav, Enter=Sym | Plain Space, plain Enter |
-| Combos | J+K=Esc, D+F=Tab, etc. | All disabled |
-| CapsWord | Available | Caps Lock instead (traditional) |
-| Meh key | Ctrl+Alt+Shift | Caps Lock |
-| F-keys | Via Func layer | Directly on inner columns (F1-F5 left, F3-F5+F9 right) |
+| Feature          | Base layer                  | Gaming layer                                           |
+| ---------------- | --------------------------- | ------------------------------------------------------ |
+| Home row mods    | Active (A=Cmd, S=Alt, etc.) | Disabled — all plain letters                           |
+| Layer-tap thumbs | Space=Nav, Enter=Sym        | Plain Space, plain Enter                               |
+| Combos           | J+K=Esc, D+F=Tab, etc.      | All disabled                                           |
+| CapsWord         | Available                   | Caps Lock instead (traditional)                        |
+| Meh key          | Ctrl+Alt+Shift              | Caps Lock                                              |
+| F-keys           | Via Func layer              | Directly on inner columns (F1-F5 left, F3-F5+F9 right) |
 
 ### Why a separate gaming layer?
 
@@ -570,8 +597,8 @@ overhead.
 
 ### Returning to Base
 
-Press TG(6) again — it is in the same position (left inner, row 3). The LEDs
-return to Tokyo Night colors.
+Press `Game` (`TG(6)`) again — it is in the same position (left inner, row 3).
+The LEDs return to Tokyo Night colors.
 
 ---
 
@@ -588,6 +615,7 @@ Keypress -> Moonlander (QMK) -> USB HID -> macOS -> Alacritty -> Zellij -> Emacs
 ```
 
 Each layer can intercept or modify the keypress:
+
 - QMK resolves home row mods, combos, leader sequences, and layers.
 - macOS handles Cmd shortcuts (Cmd+C = copy) before they reach the terminal.
 - Alacritty interprets terminal escape sequences and key bindings.
@@ -601,14 +629,16 @@ to Emacs. This is critical — without LOCKED mode, Zellij would intercept
 Ctrl+P, Ctrl+N, Ctrl+B, and other keys that Emacs needs.
 
 **Alt+Z** toggles Zellij between LOCKED and NORMAL mode. On your keyboard:
+
 - Home row: hold S (Alt), tap Z. This uses the chordal hold exception for
   the left Alt key (S) which is configured for opposite-hand default but
-  S is Alt, not Ctrl or Gui, so it follows the standard chordal hold rule.
+  S is Alt, not Ctrl or Cmd, so it follows the standard chordal hold rule.
   You may find it more reliable to use the physical LAlt key on the bottom
   row + Z.
 - Physical key: hold the bottom-row LAlt, tap Z.
 
 **When Zellij is UNLOCKED (NORMAL mode),** common Zellij keys include:
+
 - Alt+N = new pane
 - Alt+H/J/K/L = move between panes (mirrors Vim/Nav layer directions)
 - Alt+[ / Alt+] = switch tabs
@@ -625,7 +655,7 @@ Moonlander sends standard keycodes, so Alacritty treats it like any
 keyboard. Key points:
 
 - **Hyper key** (right thumb inner): Alacritty can bind Hyper+<key>
-  combinations. Since Hyper = Ctrl+Alt+Shift+Gui, this creates unique
+  combinations. Since Hyper = Ctrl+Alt+Shift+Cmd, this creates unique
   bindings that nothing else intercepts. Useful for Alacritty-level actions
   like font size changes or opening new windows.
 - **Ctrl sequences**: Alacritty translates Ctrl+<letter> into terminal
@@ -641,23 +671,23 @@ keyboard. Key points:
 
 The most important integration. In Emacs, you use Ctrl constantly:
 
-| Keyboard action | QMK sends | Emacs receives |
-|-----------------|-----------|----------------|
-| Hold F, tap X | Ctrl+X | C-x prefix |
-| Hold F, tap S | Ctrl+S | isearch / save (after C-x) |
-| Hold F, tap G | Ctrl+G | keyboard-quit |
-| Hold F, tap Space | Ctrl+Space | set-mark |
+| Keyboard action   | QMK sends  | Emacs receives             |
+| ----------------- | ---------- | -------------------------- |
+| Hold F, tap X     | Ctrl+X     | C-x prefix                 |
+| Hold F, tap S     | Ctrl+S     | isearch / save (after C-x) |
+| Hold F, tap G     | Ctrl+G     | keyboard-quit              |
+| Hold F, tap Space | Ctrl+Space | set-mark                   |
 
 These work because home row Ctrl sends the same USB HID codes as physical
 Ctrl. Emacs cannot tell the difference.
 
 #### Meta/Alt sequences via home row mods
 
-| Keyboard action | QMK sends | Emacs receives |
-|-----------------|-----------|----------------|
-| Hold S, tap X | Alt+X | M-x (execute-extended-command) |
-| Hold S, tap F | Alt+F | M-f (forward-word) |
-| Hold S, tap B | Alt+B | M-b (backward-word) |
+| Keyboard action | QMK sends | Emacs receives                 |
+| --------------- | --------- | ------------------------------ |
+| Hold S, tap X   | Alt+X     | M-x (execute-extended-command) |
+| Hold S, tap F   | Alt+F     | M-f (forward-word)             |
+| Hold S, tap B   | Alt+B     | M-b (backward-word)            |
 
 Requires Alacritty to send Alt as ESC prefix (Meta).
 
@@ -668,15 +698,16 @@ are two-step sequences that are awkward with home row mods because you need
 to hold Ctrl, tap X, release, then hold Ctrl again (or not) for the second
 key. The Leader key eliminates this:
 
-| Old way (home row) | New way (Leader) | Result |
-|--------------------|------------------|--------|
-| Hold F, tap X, release, hold F, tap S | Tap Leader, tap X, tap S | C-x C-s (save) |
-| Hold F, tap X, release, tap B | Tap Leader, tap X, tap B | C-x b (switch buffer) |
-| Hold F, tap X, release, tap G | Tap Leader, tap G | C-x g (magit) |
+| Old way (home row)                    | New way (Leader)         | Result                |
+| ------------------------------------- | ------------------------ | --------------------- |
+| Hold F, tap X, release, hold F, tap S | Tap Leader, tap X, tap S | C-x C-s (save)        |
+| Hold F, tap X, release, tap B         | Tap Leader, tap X, tap B | C-x b (switch buffer) |
+| Hold F, tap X, release, tap G         | Tap Leader, tap G        | C-x g (magit)         |
 
 #### Vertico, Consult, Corfu
 
 These completion frameworks use standard Emacs keybindings:
+
 - **Vertico**: C-n / C-p to navigate candidates (hold F, tap N/P).
 - **Consult**: M-x to invoke, then type. Standard minibuffer interaction.
 - **Corfu**: Completion popup uses Tab (combo D+F or physical Tab) to confirm.
@@ -689,13 +720,13 @@ These completion frameworks use standard Emacs keybindings:
 The Nav layer gives you arrow keys on HJKL, plus Home/End/PgUp/PgDn. These
 work in Emacs as cursor movement. Combine with left-hand modifiers:
 
-| Action | Keys (Nav layer) | Emacs effect |
-|--------|------------------|--------------|
-| Move by line | Hold Space, tap J/K | C-n / C-p equivalent |
-| Move by char | Hold Space, tap H/L | C-b / C-f equivalent |
-| Select text | Hold Space + D(Shift), tap HJKL | Shift-select |
-| Top/bottom of buffer | Hold Space, tap I/O (Home/End) | Beginning/end in some configs |
-| Scroll | Hold Space, tap U/P (PgUp/PgDn) | scroll-down / scroll-up |
+| Action               | Keys (Nav layer)                | Emacs effect                  |
+| -------------------- | ------------------------------- | ----------------------------- |
+| Move by line         | Hold Space, tap J/K             | C-n / C-p equivalent          |
+| Move by char         | Hold Space, tap H/L             | C-b / C-f equivalent          |
+| Select text          | Hold Space + D(Shift), tap HJKL | Shift-select                  |
+| Top/bottom of buffer | Hold Space, tap I/O (Home/End)  | Beginning/end in some configs |
+| Scroll               | Hold Space, tap U/P (PgUp/PgDn) | scroll-down / scroll-up       |
 
 **Note:** Emacs purists may prefer C-n/C-p/C-b/C-f over arrow keys. Both
 approaches work. The Nav layer is there when you want it.
@@ -706,14 +737,14 @@ approaches work. The Nav layer is there when you want it.
 
 ### Color vocabulary (consistent across all layers)
 
-| Brightness | Meaning | Example |
-|------------|---------|---------|
-| Bright (full saturation, full value) | Primary function — this is what the layer is for | Arrow keys on Nav |
-| Medium (full saturation, reduced value) | Supporting function — secondary purpose | Home/End on Nav |
-| Pastel (reduced saturation, full value) | Modifier — always available, not layer-specific | GUI/Alt/Shift/Ctrl on any layer |
-| Off / dark (value = 0) | Nothing here — key is transparent or unused | Empty spots |
-| White (no hue, full value) | Mode toggle | TG(Gaming) toggle key |
-| Bright Red (H=0, full saturation) | DANGER — destructive action | Bootloader keys |
+| Brightness                              | Meaning                                          | Example                         |
+| --------------------------------------- | ------------------------------------------------ | ------------------------------- |
+| Bright (full saturation, full value)    | Primary function — this is what the layer is for | Arrow keys on Nav               |
+| Medium (full saturation, reduced value) | Supporting function — secondary purpose          | Home/End on Nav                 |
+| Pastel (reduced saturation, full value) | Modifier — always available, not layer-specific  | Cmd/Alt/Shift/Ctrl on any layer |
+| Off / dark (value = 0)                  | Nothing here — key is transparent or unused      | Empty spots                     |
+| White (no hue, full value)              | Mode toggle                                      | `Game` / `TG(6)` toggle key     |
+| Bright Red (H=0, full saturation)       | DANGER — destructive action                      | Bootloader keys                 |
 
 ### Per-layer color themes
 
@@ -722,39 +753,45 @@ Blue, cyan, magenta gradient. The default resting state. Each column subtly
 shifts hue from left to right, matching the Tokyo Night color palette.
 
 **Layer 1 — Nav: Forest Green (H=85)**
+
 - Bright green: Arrow keys (HJKL)
 - Medium green: Home, End, Page Up, Page Down
-- Pastel green: Left-hand modifiers (GUI, Alt, Shift, Ctrl)
+- Pastel green: Left-hand modifiers (Cmd, Alt, Shift, Ctrl)
 - Teal accent (H=106): macOS shortcuts (Cmd+Z/X/C/V)
 
 **Layer 2 — Sym: Amber/Gold (H=32)**
+
 - Bright amber: Number keys (0-9)
 - Orange (H=21): Bracket pairs and symbols
-- Gold (H=43): Operators (+, -, *, =)
+- Gold (H=43): Operators (+, -, \*, =)
 - Desaturated amber: Lesser symbols and modifiers
 
 **Layer 3 — Func: Amethyst/Purple (H=191)**
+
 - Bright purple: F-keys (F1-F12)
 - Violet (H=213): Media controls (Prev, Next)
 - Rose (H=234): Volume controls
 
 **Layer 4 — Mouse: Coral/Pink (H=234)**
+
 - Bright coral: Mouse movement (HJKL positions)
 - Pink: Mouse buttons (Btn1, Btn2, Btn3)
 - Rose: Scroll wheel keys
 - Desaturated coral: Left-hand modifiers and thumb buttons
 
 **Layer 5 — System: Ember/Red (H=0)**
+
 - BRIGHT RED: Bootloader keys (top inner corners) — DANGER
 - Orange (H=21): RGB controls
 - Warm red (desaturated): Audio toggle, DT tuning keys
 
 **Layer 6 — Gaming: Neon Lime (H=64)**
+
 - Bright lime: WASD and main letter keys
 - Green accent (H=85): Number row, F-keys
 - Pastel lime: Modifier keys (Shift, Ctrl, Alt)
 - Dim lime: Right-hand auxiliary keys
-- White: TG toggle key (so you can find it to exit)
+- White: `Game` / `TG(6)` toggle key (so you can find it to exit)
 
 ### CapsWord indicator
 
@@ -775,13 +812,13 @@ whether a keypress is a "tap" or a "hold":
 
 Default: 200ms. Per-key adjustments:
 
-| Key | Tapping term | Why |
-|-----|-------------|-----|
-| A, ; (pinkies) | 240ms (+40) | Pinkies are slower — need more time to release |
-| S, L (ring fingers) | 220ms (+20) | Ring fingers are slightly slower than middle/index |
-| D, K, F, J (middle/index) | 200ms (default) | Fastest fingers, default timing |
-| Space (LT Nav) | 180ms (-20) | Thumb is fast and deliberate — quicker layer access |
-| Enter (LT Sym) | 180ms (-20) | Same as Space |
+| Key                       | Tapping term    | Why                                                 |
+| ------------------------- | --------------- | --------------------------------------------------- |
+| A, ; (pinkies)            | 240ms (+40)     | Pinkies are slower — need more time to release      |
+| S, L (ring fingers)       | 220ms (+20)     | Ring fingers are slightly slower than middle/index  |
+| D, K, F, J (middle/index) | 200ms (default) | Fastest fingers, default timing                     |
+| Space (LT Nav)            | 180ms (-20)     | Thumb is fast and deliberate — quicker layer access |
+| Enter (LT Sym)            | 180ms (-20)     | Same as Space                                       |
 
 ### Flow Tap: the anti-misfire system
 
@@ -796,7 +833,7 @@ as follows:
 This means: during normal typing flow, home row mods never accidentally
 trigger. You have to deliberately pause before a keypress to activate a hold.
 
-**Exception:** Flow Tap is disabled when GUI, Ctrl, or Left Alt are already
+**Exception:** Flow Tap is disabled when Cmd, Ctrl, or Left Alt are already
 held. This ensures that once you activate a modifier, additional modifier
 presses work correctly even at speed.
 
@@ -809,7 +846,8 @@ Chordal Hold adds another layer of misfire prevention:
   A (left) then S (left) = no hold, both are taps.
 
 **Configured exceptions** (same-hand holds that DO work):
-- GUI (A) + left-hand keys: for Cmd+Z, Cmd+X, Cmd+C, Cmd+V, Cmd+S, Cmd+W,
+
+- Cmd (A) + left-hand keys: for Cmd+Z, Cmd+X, Cmd+C, Cmd+V, Cmd+S, Cmd+W,
   Cmd+Q, Cmd+T, etc.
 - Ctrl (F) + left-hand keys: for C-x, C-c, C-a, C-s, C-z, C-g, C-b, etc.
 - Shift (D) + left-hand keys: for capitalizing left-hand letters.
@@ -818,14 +856,14 @@ Chordal Hold adds another layer of misfire prevention:
 
 ### Dynamic Tapping Term (runtime tuning)
 
-On the System layer (hold MO(5) on the right bottom inner key), the left
+On the System layer (hold `Sys` / `MO(5)` on the right bottom inner key), the left
 bottom row has three DT keys:
 
-| Key position | Function | What it does |
-|-------------|----------|--------------|
-| Left bottom, col 4 (where [ is on Base) | DT_DOWN | Decrease tapping term by 5ms |
-| Left bottom, col 5 (where ] is on Base) | DT_UP | Increase tapping term by 5ms |
-| Left GUI position (thumb) | DT_PRNT | Print current tapping term to the console |
+| Key position                            | Function | What it does                              |
+| --------------------------------------- | -------- | ----------------------------------------- |
+| Left bottom, col 4 (where [ is on Base) | DT_DOWN  | Decrease tapping term by 5ms              |
+| Left bottom, col 5 (where ] is on Base) | DT_UP    | Increase tapping term by 5ms              |
+| Left upper thumb-pod position           | DT_PRNT  | Print current tapping term to the console |
 
 **How to use DT_PRNT:** Enable QMK console (hid_listen or qmk console) to
 see the current value. Each press of DT_UP or DT_DOWN adjusts by 5ms.
@@ -834,25 +872,30 @@ Changes persist until the keyboard is unplugged.
 ### Diagnosing misfires
 
 **Symptom: Letters appear as modifiers (e.g., pressing A opens Spotlight)**
+
 - Cause: You are holding A too long.
 - Fix: Increase tapping term for pinkies (DT_UP while on System layer), or
   practice tapping more crisply.
 
 **Symptom: Modifiers do not activate when intended**
+
 - Cause: You are pressing the second key too quickly (within Flow Tap window).
 - Fix: Pause briefly before the hold key, then press the second key.
 - Alternative: Decrease FLOW_TAP_TERM in config.h (requires reflashing).
 
 **Symptom: Home row mod works with opposite hand but not same hand**
+
 - Cause: Chordal Hold is blocking same-hand activation.
 - Fix: Check if the combination is in the exception list. If not, add it
   to `get_chordal_hold()` in custom_features.c.
 
 **Symptom: Combos fire accidentally during normal typing**
+
 - Cause: COMBO_TERM (40ms) may be too generous for your typing speed.
 - Fix: Reduce COMBO_TERM in config.h (requires reflashing). Try 30ms or 25ms.
 
 **Symptom: Space/Enter hold activates layer too easily**
+
 - Cause: Tapping term for thumbs may be too long.
 - Fix: These are already set to 180ms. If still too sensitive, you can
   increase them, but this slows layer access.
@@ -904,6 +947,7 @@ config.h and rules.mk. Oryx does not know about them:
 ### Workflow for making changes
 
 **If you only need to change key positions or LED colors:**
+
 1. Edit in Oryx at https://configure.zsa.io/moonlander/layouts/EnBmG
 2. Export the updated keymap.c
 3. The exported file will NOT contain your custom features.
@@ -912,12 +956,14 @@ config.h and rules.mk. Oryx does not know about them:
 5. Compile and flash.
 
 **If you need to change custom features:**
+
 1. Edit custom_features.c / custom_features.h / config.h / rules.mk directly.
 2. Do NOT re-export from Oryx — it will overwrite your changes.
-3. Compile locally: `qmk compile -kb moonlander -km EnBmG`
+3. Compile locally: `qmk compile -kb zsa/moonlander/reva -km EnBmG`
 4. Flash with Keymapp.
 
 **If you need to change both:**
+
 1. Make the Oryx changes and export.
 2. Use git diff to identify what Oryx changed in keymap.c.
 3. Apply only the Oryx keymaps[] changes, preserving custom sections.
@@ -937,6 +983,7 @@ EnBmG/
 ```
 
 The boundary between Oryx-managed and custom code is marked with:
+
 ```
 // ═══════════════════════════════════════════════════════════════════
 // Custom QMK Configuration — append only, do not edit above
@@ -961,14 +1008,14 @@ the web configurator.
 ### Thumb keys
 
 ```
-Left:  [Space/Nav]  [Bspc]  [Ctrl]        Right:  [Hypr]  [Tab]  [Enter/Sym]
+Left:  [LCtrl pod]  [Space/Nav]  [Bspc]  [LCmd]     Right:  [Hypr]  [Tab]  [Enter/Sym]
 ```
 
 ### Home row mods (GASC)
 
 ```
-Left:   A=Gui  S=Alt  D=Sft  F=Ctl
-Right:  J=Ctl  K=Sft  L=Alt  ;=Gui
+Left:   A=Cmd  S=Alt  D=Shift  F=Ctrl
+Right:  J=Ctrl K=Shift L=Alt   ;=Cmd
 ```
 
 ### Combos
@@ -992,8 +1039,8 @@ Hold Space        = Nav (green)      Release = back to Base
 Hold Enter        = Sym (amber)      Release = back to Base
 Hold Space+Enter  = Func (purple)    Release = back to Base
 Hold Z+X          = Mouse (pink)     Release = back to Base
-Hold MO(5)        = System (red)     Release = back to Base
-Press TG(6)       = Gaming (lime)    Press again = back to Base
+Hold Sys / MO(5)  = System (red)     Release = back to Base
+Press Game / TG(6) = Gaming (lime)   Press again = back to Base
 ```
 
 ### Key override
